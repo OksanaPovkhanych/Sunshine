@@ -90,7 +90,7 @@ public class ForecastFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, String[]>
+    public class FetchWeatherTask extends AsyncTask <String, Void, String[]>
     {
         @Override
         protected void onPostExecute(String[] result) {
