@@ -116,7 +116,7 @@ public class ForecastFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
             String mode = "json";
-            String units = "metic";
+            String units = "metric";
             int numDays = 7;
             try {
                 // Construct the URL for the OpenWeatherMap query
