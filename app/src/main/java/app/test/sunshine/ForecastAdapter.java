@@ -99,13 +99,11 @@ public class ForecastAdapter extends CursorAdapter {
         // Read date from cursor
         long dateInMillis = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         // Find TextView and set formatted date on it
-        //TextView dateView = (TextView) view.findViewById(R.id.list_item_date_textview);
         viewHolder.dateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
 
         // Read weather forecast from cursor
         String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
         // Find TextView and set weather forecast on it
-       // TextView descriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
         viewHolder.descriptionView.setText(description);
 
         // Read user preference for metric or imperial temperature units
@@ -113,13 +111,11 @@ public class ForecastAdapter extends CursorAdapter {
 
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-    //    TextView highView = (TextView) view.findViewById(R.id.list_item_high_textview);
-        viewHolder.highTempView.setText(Utility.formatTemperature(context, high, isMetric));
+        viewHolder.highTempView.setText(Utility.formatTemperature(context, high));
 
         // Read low temperature from cursor
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-//        TextView lowView = (TextView) view.findViewById(R.id.list_item_low_textview);
-        viewHolder.lowTempView.setText(Utility.formatTemperature(context, low, isMetric));
+        viewHolder.lowTempView.setText(Utility.formatTemperature(context, low));
     }
 
     /**

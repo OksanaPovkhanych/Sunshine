@@ -1,5 +1,8 @@
 package app.test.sunshine;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.support.v4.app.LoaderManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import app.test.sunshine.data.WeatherContract;
+import app.test.sunshine.sync.SunshineSyncAdapter;
 
 /**
  * Created by Ksyusha on 06.02.2015.
@@ -67,6 +72,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public interface Callback
     {
         public void OnItemSelected(Uri dateUri);
+
+
+
     }
 
 
@@ -83,10 +91,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     public void update ()
     {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-        String location = Utility.getPreferredLocation(getActivity());
-       weatherTask.execute(location);
-
+        SunshineSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -95,6 +100,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (id ==  R.id.action_refresh)
         {
             update();
+            return true;
+        }
+        if (id == R.id.action_map)
+        {
+           openPreferredLocationInMap();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -143,6 +153,31 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
        forecastAdapter.setUseTodayLayout(mUseTodayLayout);
         return rootView;
+    }
+
+    private void openPreferredLocationInMap() {
+        // Using the URI scheme for showing a location found on a map.  This super-handy
+        // intent can is detailed in the "Common Intents" page of Android's developer site:
+        // http://developer.android.com/guide/components/intents-common.html#Maps
+        if ( null != forecastAdapter ) {
+            Cursor c = forecastAdapter.getCursor();
+            if ( null != c ) {
+                c.moveToPosition(0);
+                String posLat = c.getString(COL_COORD_LAT);
+                String posLong = c.getString(COL_COORD_LONG);
+                Uri geoLocation = Uri.parse("geo:" + posLat + "," + posLong);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(geoLocation);
+
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
+                }
+            }
+
+        }
     }
 
     @Override
